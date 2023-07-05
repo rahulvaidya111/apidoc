@@ -1,24 +1,15 @@
 let express = require('express');
 let app = express();
-let port = 9120;
+let port = process.env.PORT||9120;
 let Mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const cors = require ('cors');
-let {dbConnect,getData,postData} = require('./controller/dbController')
+let {dbConnect,getData,postData,updateorder} = require('./controller/dbController')
 
-// middleware supporting liberary
+// middleware supporting liberary to postman
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended:true}))
 app.use(cors())
-
-
-
-
-
-app.get('/',(req,res) => {
-    res.send('Hiii From express')
-})
-
 
 
 
@@ -33,14 +24,21 @@ app.get('/categories',async (req,res)=>{
 //get all products
 app.get('/products', async (req,res) => {
     let query = {};
+    if(req.query.categoryid){
+        query={category_id: Number(req.query.categoryid)}
+    }else{
+        query = {}
+    }
     let collection = "products";
     let output = await getData(collection,query);
     res.send(output)
 })
+
+
 // get similarItem
 app.get('/SimilarItem', async(req,res) => {
     let query = {}
-    if(req.query.stateId){
+    if(req.query.categoryid){
         query={category_id: Number(req.query.categoryid)}
     }else{
         query = {}
@@ -55,7 +53,12 @@ app.get('/TodayDeals', async (req,res) => {
     let query = {};
     if(req.query.categoryId){
         query={category_id: Number(req.query.categoryId)}
-    }else{
+    }
+    // else if(req.query.item){
+    //     query={"TodayDeals.item": Number(req.query.item)}
+    // }
+    // item se find kar raha tha
+    else{
         query = {}
     }
     let collection = "TodayDeals";
@@ -63,12 +66,15 @@ app.get('/TodayDeals', async (req,res) => {
     res.send(output)
 })
 
+// ---------------Data find the basic of cost--------------------
+
 
 // Details Item
 
-app.get('/ItemDetails', async (req,res) => {
-    let query = {};
-    let collection = "ItemDetails";
+app.get('/Detailsitem/:id', async (req,res) => {
+    let id = Number(req.params.id);
+    let query = {category_id:id};
+    let collection = "Detailsitem";
     let output = await getData(collection,query);
     res.send(output)
 })
@@ -76,18 +82,19 @@ app.get('/ItemDetails', async (req,res) => {
 // Order list
 
 app.get('/orders',async(req,res)=>{
-    let email = req.query.email;
-    if(email){
-        query={email:email}
-    }
     let query = {};
+    if(req.query.email){
+        query={email:req.query.email}
+    }else{
+        query = {}
+    }
     let collection = "orders";
     let output = await getData(collection,query);
     res.send(output)
 })
 
 //placeOrder
-app.post('/placeOrder',async(req,res) => {
+app.post('/placeorders',async(req,res) => {
     let data = req.body;
     let collection = "orders";
     console.log(">>>",data)
@@ -95,11 +102,11 @@ app.post('/placeOrder',async(req,res) => {
     res.send(response)
 })
 
-//menu details {"id":[4,8,21]}
-app.post('/ItemDetails',async(req,res) => {
+//menu details {"id":[4,8,2]}
+app.post('/Detailsitem',async(req,res) => {
     if(Array.isArray(req.body.id)){
-        let query = {Details_id:{$in:req.body.id}};
-        let collection = 'Details';
+        let query = {Deals_id:{$in:req.body.id}};
+        let collection = 'Deals';
         let output = await getData(collection,query);
         res.send(output)
     }else{
@@ -107,6 +114,22 @@ app.post('/ItemDetails',async(req,res) => {
     }
 })
 
+
+// update orders
+app.put('/updateorder',async(req,res)=>{
+    let collection = 'orders';
+    let condition = {"_id":new Mongo.ObjectId(req.body._id)}
+    let data = {
+        $set:{
+            "status":req.body.status
+        }
+    }
+    let response = await updateorder(collection,condition,data)
+})
+
+
+
+// Delete order
 
 app.listen(port,(err) => {
     dbConnect()

@@ -38,8 +38,20 @@ async function postData(colName,data){
 }
 
 
+async function updateorder(colName,condition,data){
+    let output;
+    try{
+        output = await db.collection(colName).updateOne(condition,data)
+    }
+    catch(err){
+        output = {"response":"Error in postData"}
+    }
+    return output
+}
+
 module.exports = {
     dbConnect,
     getData,
-    postData
+    postData,
+    updateorder
 }

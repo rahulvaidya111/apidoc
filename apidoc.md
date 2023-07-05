@@ -4,32 +4,39 @@ URBON_MONKEY
 //Page 1
 >List of Catogries
 http://localhost:9120/categories
-https://urbanmonkey.onrender/categories
+
 >Quick Search
 http://localhost:9120/products
-https://urbanmonkey.onrender/product
-
+http://localhost:9120/products?categoryid=2
 
 
 //Page-2
 >Variety of Item Similar product
 http://localhost:9120/SimilarItem
 
->Item Rang and Discount
+>Today Deals and Discount
+http://localhost:9120/TodayDeals
 
 //page3
 >Details of Product/Item
-http://localhost:9120/todaydeals
-https://urbanmonkey.onrender/todaydeals
+http://localhost:9120/Detailsitem/3
+{"id":[4,8,2]}
+
+
 >Place order
-https://urbanmonkey.onrender/orders
+http://localhost:9120/placeorders
+
 
 //Page4
 >List of all the order
-https://urbanmonkey.onrender/orders
+http://localhost:9120/orders
 
 
 >Update order details
+**
+
 
 >delete order
+**
+
 
