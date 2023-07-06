@@ -4,7 +4,7 @@ let port = process.env.PORT||9120;
 let Mongo = require('mongodb');
 const bodyParser = require('body-parser');
 const cors = require ('cors');
-let {dbConnect,getData,postData,updateorder} = require('./controller/dbController')
+let {dbConnect,getData,postData,updateorder} = require('./Controller/dbController')
 
 // middleware supporting liberary to postman
 app.use(bodyParser.json());
